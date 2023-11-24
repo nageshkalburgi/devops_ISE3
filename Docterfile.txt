@@ -1,0 +1,11 @@
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:8-jdk-alpine
+
+# Set the working directory in the container
+WORKDIR /usr/app
+
+# Copy the application JAR file into the container at /usr/app
+COPY target/your-java-application.jar .
+
+# Specify the command to run on container start
+CMD ["java", "-jar", "your-java-application.jar"]
