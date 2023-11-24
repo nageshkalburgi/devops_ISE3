@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the GitHub repository
+                git 'https://github.com/your-username/java-docker-jenkins-example.git'
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    dockerImage = docker.build("your-dockerhub-username/your-java-application:${env.BUILD_ID}")
+
+                    // Push the Docker image to Docker Hub
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials-id') {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('Pull and Run Docker Image on Another System') {
+            steps {
+                script {
+                    // Pull the Docker image from Docker Hub
+                    dockerImage = docker.image("your-dockerhub-username/your-java-application:${env.BUILD_ID}")
+
+                    // Run a new container from the pulled image
+                    dockerImage.run("-p 8080:8080 --name your-container-name")
+                }
+            }
+        }
+    }
+}
